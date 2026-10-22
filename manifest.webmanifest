@@ -1,0 +1,13 @@
+{
+  "name": "Domi’s Psychology – A Level 9990",
+  "short_name": "Psychology",
+  "description": "Year 13 Cambridge A Level Psychology revision: notes, videos, quizzes, flashcards, exam practice and notebook.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f5fb",
+  "theme_color": "#6d4aff",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
