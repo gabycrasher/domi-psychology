@@ -2,6 +2,8 @@
 (() => {
 'use strict';
 const P = window.PSY;
+const Y12OK = !!(P.y12 && P.y12.options && P.y12.options.rm); // Year 12 files may be missing during an update
+if (!Y12OK) P.y12 = { options: {}, studies: {}, debates: {}, debateOrder: [], exam: {} };
 
 /* ───────────── year packs: Year 12 (AS) and Year 13 (A Level) ───────────── */
 const PACKS = {
@@ -85,7 +87,7 @@ const DEF = { name: 'Domi', year: 13, yd: {}, news: 0, opts: [], onboarded: fals
   conf: {}, visited: {}, last: '', quiz: {}, flash: {}, notes: [], examAns: {}, plan: null, streak: { last: '', n: 0 } };
 let S = (() => { try { return Object.assign(structuredClone(DEF), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { return structuredClone(DEF); } })();
 function applyYear() {
-  if (!PACKS[S.year]) S.year = 13;
+  if (!PACKS[S.year] || (S.year === 12 && !Y12OK)) S.year = 13;
   Y = PACKS[S.year]; ORDER = Y.order; indexContent();
   document.documentElement.dataset.year = S.year;
 }
@@ -264,7 +266,7 @@ document.addEventListener('visibilitychange', () => { /* keep reading in backgro
 
 /* ───────────── year switch ───────────── */
 // a two-position toggle with a sliding pill; each year keeps its own notes and progress
-const yearSwitch = (cls = '') => `<div class="yr-sw ${cls}" data-y="${S.year}" role="radiogroup" aria-label="School year"><span class="yr-pill" aria-hidden="true"></span>${[12, 13].map(y => `<button type="button" role="radio" aria-checked="${S.year === y}" data-year="${y}" title="${PACKS[y].L.name} · ${PACKS[y].L.level}"><b>Y${y}</b><small>${y === 12 ? 'AS' : 'A2'}</small></button>`).join('')}</div>`;
+const yearSwitch = (cls = '') => !Y12OK ? '' : `<div class="yr-sw ${cls}" data-y="${S.year}" role="radiogroup" aria-label="School year"><span class="yr-pill" aria-hidden="true"></span>${[12, 13].map(y => `<button type="button" role="radio" aria-checked="${S.year === y}" data-year="${y}" title="${PACKS[y].L.name} · ${PACKS[y].L.level}"><b>Y${y}</b><small>${y === 12 ? 'AS' : 'A2'}</small></button>`).join('')}</div>`;
 function doYearSwitch(y) {
   y = +y; if (y === S.year) return;
   ttsStop();
@@ -997,7 +999,7 @@ addEventListener('hashchange', () => { sessionStorage.setItem('navd', '1'); rout
 /* ───────────── boot ───────────── */
 applyLook(); buildShell(); route();
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', applyLook);
-if (!S.onboarded) setTimeout(onboard, 250); else if ((S.news || 0) < 1) setTimeout(whatsNew, 700);
+if (!S.onboarded) setTimeout(onboard, 250); else if (Y12OK && (S.news || 0) < 1) setTimeout(whatsNew, 700);
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   const hadSW = !!navigator.serviceWorker.controller;
   navigator.serviceWorker.register('sw.js').catch(() => {});
