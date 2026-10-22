@@ -1,6 +1,6 @@
 /* Offline support: cache the app shell, refresh it in the background. */
-const CACHE = 'dpsy-v1';
-const SHELL = ['./', 'index.html', 'assets/style.css', 'assets/app.js', 'assets/content-common.js', 'assets/content-clinical.js', 'assets/content-consumer.js', 'assets/content-health.js', 'assets/content-organisational.js', 'icon.svg', 'manifest.webmanifest'];
+const CACHE = 'dpsy-v2';
+const SHELL = ['./', 'index.html', 'assets/style.css', 'assets/app.js', 'assets/content-common.js', 'assets/content-clinical.js', 'assets/content-consumer.js', 'assets/content-health.js', 'assets/content-organisational.js', 'assets/y12-common.js', 'assets/y12-bio.js', 'assets/y12-cog.js', 'assets/y12-lrn.js', 'assets/y12-soc.js', 'assets/y12-methods.js', 'icon.svg', 'manifest.webmanifest'];
 
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
